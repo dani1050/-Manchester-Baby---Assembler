@@ -19,7 +19,6 @@ public:
     Assembler();
     vector<pair<string, string>> instructions;
     static vector<string> readFile(string f);
-    vector<string> assemble(vector<string> commands);
     static vector<string> removeComments(vector<string> commands);
     int DecimalToBinary(int dec);
 };
