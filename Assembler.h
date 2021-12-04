@@ -1,5 +1,6 @@
 //
 // Created by danci on 01/12/2021.
+// Edited by jerryyyx on 04/12/2021.
 //
 
 #ifndef ASSEMBLER_ASSEMBLER_H
@@ -20,6 +21,7 @@ public:
     vector<pair<string, string>> instructions;
     static vector<string> readFile(string f);
     static vector<string> removeComments(vector<string> commands);
+    static vector<array<int, 32>> convertToBinaryVector(vector<string> uncommentedCode);
     int DecimalToBinary(int dec);
 };
 
