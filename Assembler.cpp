@@ -64,7 +64,7 @@ vector<string> Assembler::removeComments(const vector<string> &commands) {
 string Assembler::DecimalToBinary(int dec) {
     //checks if the number entered is larger than 0
     if (dec < 0) {
-        throw std::invalid_argument("received negative value");
+        throw std::invalid_argument("received negative value: " + to_string(dec));
     }
     if (dec == 0) {
         return "0";
@@ -155,7 +155,7 @@ vector<string> Assembler::convert(vector<string> uncommentedCode) {
             //This iterates through the SymbolTable looking for the missing address
             for (auto &j: SymbolTable) {
                 //if the address is found than the temporary value is replaced
-                if (j.first == line.substr(line.find_last_of(' ') + 1)) {
+                if (j.first == line.substr(line.find_last_of(' ') + 1 && j.second != -1)) {
                     int varAddress = j.second;
                     string varAddressInBinary = reverseString(DecimalToBinary(varAddress));
                     varAddressInBinary.insert(varAddressInBinary.end(), 13 - varAddressInBinary.length(), '0');
@@ -164,6 +164,12 @@ vector<string> Assembler::convert(vector<string> uncommentedCode) {
                     break;
                 }
             }
+        }
+    }
+    for (int i = 0; i < SymbolTable.size(); ++i) {
+        if(SymbolTable.at(i).second==-1){
+            //TODO: Change this to a more suitable exception
+            throw invalid_argument("Variable "+SymbolTable.at(i).first+" is never declared");
         }
     }
     return binary;
@@ -187,10 +193,17 @@ void Assembler::addVariableToSymbolTable(const string &variableName, int address
     for (auto &i: SymbolTable) {
         //checks if the label is already part of the table
         if (variableName == i.first) {
-            i.second = address;
+            if(address!=-1 && i.second==-1) {
+                cout << "Updated " + variableName + "s address in the SymbolTable to " + to_string(address) << endl;
+                i.second = address;
+            }else if(i.second>0){
+                throw invalid_argument("Variable is already declared elsewhere "+variableName+" "+"line: "+ to_string(address)+"<->"+
+                                                                                                                              to_string(i.second));
+            }
             return;
         }
     }
+    cout<<"Added "+variableName+" to the Symbol table with address "+ to_string(address)<<endl;
     SymbolTable.emplace_back(variableName, address);
 
 }
@@ -212,5 +225,6 @@ string Assembler::getInstruction(const string &instruction) {
         }
     }
     throw invalid_argument(
-            "Invalid instruction the " + instruction + "is not part of the instruction set of the Manchester Baby");
+            "Invalid instruction the " + instruction + " is not part of the instruction set of the Manchester Baby");
 }
+

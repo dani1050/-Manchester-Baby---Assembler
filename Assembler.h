@@ -27,7 +27,6 @@ public:
     vector<pair<string, string>> instructions;
     static vector<string> readFile(const string& f);
     static vector<string> removeComments(const vector<string>& commands);
-    //static vector<array<int, 32>> convertToBinaryVector(vector<string> uncommentedCode);
     static string reverseString(string s);
     static string DecimalToBinary(int dec);
     static bool writeToFile(const vector<string>& code,const string& fileName);
