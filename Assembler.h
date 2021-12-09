@@ -11,18 +11,32 @@
 #include <fstream>
 #include <string>
 #include <regex>
+#include <array>
+#include <algorithm>
+#include <functional>
+
 
 using namespace std;
 
+
 class Assembler {
 public:
-    int CI;
+
     Assembler();
+    vector<pair<string, int>> SymbolTable;
     vector<pair<string, string>> instructions;
-    static vector<string> readFile(string f);
-    static vector<string> removeComments(vector<string> commands);
-    static vector<array<int, 32>> convertToBinaryVector(vector<string> uncommentedCode);
-    int DecimalToBinary(int dec);
+    static vector<string> readFile(const string& f);
+    static vector<string> removeComments(const vector<string>& commands);
+    //static vector<array<int, 32>> convertToBinaryVector(vector<string> uncommentedCode);
+    static string reverseString(string s);
+    static string DecimalToBinary(int dec);
+    static bool writeToFile(const vector<string>& code,const string& fileName);
+    vector<string> convert(vector<string> uncommentedCode);
+    string getInstruction(const string& instruction);
+    void addVariableToSymbolTable(const string& variableName, int address);
+    static string trim(const string& s);
+    static string constructLine(string instruction , string operand );
+
 };
 
 

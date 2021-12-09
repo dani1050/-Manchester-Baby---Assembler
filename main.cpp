@@ -2,6 +2,8 @@
 #include "Assembler.h"
 
 int main() {
-    Assembler::removeComments(Assembler::readFile("BabyTest1.txt"));
+    Assembler a;
+    Assembler::writeToFile(a.convert(a.removeComments(Assembler::readFile("BabyTest1.txt"))),"test.txt");
+
     return 0;
 }
