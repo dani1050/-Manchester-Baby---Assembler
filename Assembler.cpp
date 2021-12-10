@@ -28,7 +28,7 @@ vector<string> Assembler::readFile(const string& f) {
     ifstream file(f);
     //checks if the file is accessible
     if (!file.good()) {
-        cout << "Can not access the file" << endl;
+        throw (invalid_argument("Could not access/create the file"));
         return text;
     }
     string line;
@@ -48,10 +48,14 @@ vector<string> Assembler::removeComments(const vector<string> &commands) {
     vector<string> uncommentedCode;
     for (string line: commands) {
         //removes the comments
-        line = line.substr(0, line.find(';'));
-        line = trim(line);
-        if (!line.empty())
-            uncommentedCode.push_back(line);
+        if(regex_search(line,regex(";"))) {
+            line = line.substr(0, line.find(';'));
+            line = trim(line);
+            if (!line.empty())
+                uncommentedCode.push_back(line);
+        }else{
+            //TODO: Validate input when there is no comment
+        }
     }
     return uncommentedCode;
 }
@@ -79,6 +83,9 @@ string Assembler::DecimalToBinary(int dec) {
 
 bool Assembler::writeToFile(const vector<string> &code, const string &fileName) {
     ofstream File(fileName);
+    if(!File.good()){
+        throw (invalid_argument("Could not access/create the file"));
+    }
     string s;
     for (auto &i: code) {
 
@@ -111,7 +118,13 @@ vector<string> Assembler::convert(vector<string> uncommentedCode) {
         //checks if the line is a variable
         if (regex_match(line.substr(0, line.find(' ')), regex("VAR"))) {
             //converts the variable to binary and reverses it
-            string s = reverseString(DecimalToBinary(stoi(line.substr(line.find(' ') + 1))));
+            string s;
+            try {
+                s = reverseString(DecimalToBinary(stoi(line.substr(line.find(' ') + 1))));
+            }catch(exception& e){
+                throw invalid_argument("Missing or Invalid operand\n"+ to_string(i)+": "+line);
+            }
+
             s.insert(s.end(), 32 - s.length(), '0');
             //adds the variable to the store
             binary.push_back(s);
@@ -138,6 +151,7 @@ vector<string> Assembler::convert(vector<string> uncommentedCode) {
                 }
                 //If the label was not found than this sets the operand to temporary value until the addresses of the label is known
                 if (operand == line.substr(line.find(' ') + 1)) {
+                    cout<<operand+" variable has not been declared unit line "+ to_string(i)+", added temporary value to it's place until declaration is found"<<endl;
                     addVariableToSymbolTable(operand, -1);
                     binary.push_back(constructLine(instruction, "*****"));
                 }
@@ -148,14 +162,17 @@ vector<string> Assembler::convert(vector<string> uncommentedCode) {
         }
     }
     //This goes through the code again looking for the missing label addresses
+    cout<<"Filling in missed variable values from the SymbolTable"<<endl;
     for (int i = 0; i < uncommentedCode.size(); ++i) {
+
         string line = uncommentedCode.at(i);
         //checks if the line had a label with a missing address
-        if (regex_search(binary.at(i), regex("\\*"))) {
+        if (regex_search(binary.at(i), regex("[*]+[0-9]*"))) {
             //This iterates through the SymbolTable looking for the missing address
             for (auto &j: SymbolTable) {
                 //if the address is found than the temporary value is replaced
-                if (j.first == line.substr(line.find_last_of(' ') + 1 && j.second != -1)) {
+                if(j.first == line.substr(line.find_last_of(' ') + 1) && j.second != -1) {
+                    cout<<"Address found for "+j.first+" variable temporary value replaced at line "+ to_string(i)<<endl;
                     int varAddress = j.second;
                     string varAddressInBinary = reverseString(DecimalToBinary(varAddress));
                     varAddressInBinary.insert(varAddressInBinary.end(), 13 - varAddressInBinary.length(), '0');
@@ -228,3 +245,8 @@ string Assembler::getInstruction(const string &instruction) {
             "Invalid instruction the " + instruction + " is not part of the instruction set of the Manchester Baby");
 }
 
+void Assembler::printVector(vector<string> v){
+    for(string s:v){
+        cout<<s<<endl;
+    }
+}

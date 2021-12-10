@@ -35,6 +35,7 @@ public:
     void addVariableToSymbolTable(const string& variableName, int address);
     static string trim(const string& s);
     static string constructLine(string instruction , string operand );
+    void printVector(vector<string> v);
 
 };
 
