@@ -1,0 +1,25 @@
+VAR 1              ; Incremental Value
+LDN I              ; Load negative of counter
+SUB 0              ; Increment counter
+STO I              ; Store negative of counter
+LDN I              ; Load the positive of counter
+STO I              ; Store the positive of counter
+SUB MAX            ; Subtract upper limit
+CMP                ; Jump over next instruction if upper limit is not reached
+STP                ; When the limit is reached stop
+LDN N              ; Load negative N
+SUB N-1            ; add the N-1 element
+STO N+1            ; Store negative of N+1
+LDN N              ; Loads negative of N
+STO N-1            ; Store negative for new n-1
+LDN N-1            ; Load positive of new N-1
+STO N-1            ; Store positive of N-1
+LDN N+1            ; Load positive of new N
+STO N              ; Store positive of new N
+JMP I0             ; 0
+N+1: VAR 0         ; (N+1) element
+N: VAR 1           ; N-th element
+N-1: VAR 0         ; (N-1) element
+MAX: VAR 46             ; Location to store target index
+I0: VAR 0          ; Starting address of the loop
+I: VAR 0           ; Counter initialized to zero

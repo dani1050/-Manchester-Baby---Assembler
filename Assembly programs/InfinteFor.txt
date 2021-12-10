@@ -1,0 +1,9 @@
+I++: VAR 1 ; Incremental Value
+LDN I; Load negative coutner
+SUB I++ ; Increament counter
+STO I ; Store negative of counter
+LDN I ; Load positve of counter
+STO I ; Store posive of counter
+JMP START ; Jump 
+START: VAR 0 ; Starting Adress
+I: VAR 0 ; Counter Initialzed to 0
