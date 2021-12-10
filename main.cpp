@@ -67,7 +67,7 @@ int main() {
             cin >> answer;
             while (true) {
                 if (regex_search(answer, regex("^[Y]$|^[y]$|^[N]$|^[n]$"))) {
-                    if (answer == "Y" || "y") {
+                    if (regex_match(answer, regex("^[Y]$|^[y]$"))) {
                         cout << "Enter the filename: ";
                         cin >> answer;
                         try {

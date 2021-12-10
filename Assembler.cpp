@@ -132,8 +132,8 @@ vector<string> Assembler::convert(vector<string> uncommentedCode) {
         } else {
             //gets the binary value of the instruction
             string instruction = getInstruction(line.substr(0, line.find(' ')));
-            //checks if the instruction is STP
-            if (instruction == "111") {
+            //checks if the instruction is STP or CMP which do not need line number
+            if (instruction == "111"||instruction=="011") {
                 string s(13, '0');
                 binary.push_back(s + instruction + s + "000");
                 continue;
@@ -147,6 +147,8 @@ vector<string> Assembler::convert(vector<string> uncommentedCode) {
                 for (auto &j: SymbolTable) {
                     if (operand == j.first && j.second != -1) {
                         binary.push_back(constructLine(instruction, DecimalToBinary(j.second)));
+                        operand="-1";
+                        break;
                     }
                 }
                 //If the label was not found than this sets the operand to temporary value until the addresses of the label is known
